@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace ConsoleApp1
+namespace ConsoleApp
 {
-    public class Program
+    class Program
     {
         public static void Main(string[] args)
         {
@@ -18,7 +18,7 @@ namespace ConsoleApp1
             Console.WriteLine("Hello World!");
             Console.ReadKey();
         }
-        
+
         public static async Task MainAsync()
         {
             try
@@ -40,17 +40,35 @@ namespace ConsoleApp1
                 var login = await api.LoginAsync();
                 if (!login.Succeeded)
                     throw new Exception(login.Info.Message);
-                
+
                 // save data
                 var data = api.GetData();
 
-                var strData = JsonConvert.SerializeObject(data);
+                //var strData = JsonConvert.SerializeObject(data);
 
-                var a = api.GetStateDataAsStream();
+                //var a = api.GetStateDataAsStream();
 
-                var login2 = await api.LoginAsync();
-                if (!login2.Succeeded)
-                    throw new Exception(login2.Info.Message);
+                //var login2 = await api.LoginAsync();
+                //if (!login2.Succeeded)
+                //    throw new Exception(login2.Info.Message);
+
+                var directInbox = await api.GetDirectInboxAsync();
+                if (!directInbox.Succeeded)
+                    throw new Exception(directInbox.Info.Message);
+
+                var threads = directInbox.Value.Inbox.Threads;
+
+                foreach (var thread in threads.Where(x => !x.IsSpam))
+                {
+                    var th = await api.GetDirectInboxThreadAsync(thread.ThreadId);
+                    if (!th.Succeeded)
+                        continue;
+
+                    foreach (var message in th.Value.Items)
+                    {
+                        Console.WriteLine(message.Text);
+                    }
+                }
 
             }
             catch (Exception ex)
@@ -59,7 +77,7 @@ namespace ConsoleApp1
                 throw;
             }
 
-            
+
             /*
             //var user = await api.GetCurrentUserAsync();
             //if (!user.Succeeded)

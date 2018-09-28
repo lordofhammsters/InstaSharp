@@ -42,7 +42,7 @@ namespace InstaSharper.API.Processors
                 var userUri = UriCreator.GetSearchTagUri(query, count, excludeList, rankToken);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode == RequestHeaderFieldsTooLarge)
                     return Result.Success(tags);
@@ -73,7 +73,7 @@ namespace InstaSharper.API.Processors
                 var userUri = UriCreator.GetTagInfoUri(tagname);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaHashtag>(response, json);

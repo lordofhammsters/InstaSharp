@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using InstaSharper.Helpers;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Logger
@@ -71,7 +72,7 @@ namespace InstaSharper.Logger
         private async void WriteContent(HttpContent content, Formatting formatting, int maxLength = 0)
         {
             Write("Content:");
-            var raw = await content.ReadAsStringAsync();
+            var raw = await content.ReadAsStringUnZipAsync();
             if (formatting == Formatting.Indented) raw = FormatJson(raw);
             raw = raw.Contains("<!DOCTYPE html>") ? "got html content!" : raw;
             if ((raw.Length > maxLength) & (maxLength != 0))

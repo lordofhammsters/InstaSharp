@@ -40,7 +40,7 @@ namespace InstaSharper.API.Processors
                 var storyFeedUri = UriCreator.GetStoryFeedUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, storyFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryFeed) null);
                 var storyFeedResponse = JsonConvert.DeserializeObject<InstaStoryFeedResponse>(json);
                 var instaStoryFeed = ConvertersFabric.Instance.GetStoryFeedConverter(storyFeedResponse).Convert();
@@ -60,7 +60,7 @@ namespace InstaSharper.API.Processors
                 var userStoryUri = UriCreator.GetUserStoryUri(userId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userStoryUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK) Result.UnExpectedResponse<InstaStory>(response, json);
                 var userStoryResponse = JsonConvert.DeserializeObject<InstaStoryResponse>(json);
@@ -97,7 +97,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = requestContent;
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.IsSuccessStatusCode)
                     return await ConfigureStoryPhotoAsync(image, uploadId, caption);
                 return Result.UnExpectedResponse<InstaStoryMedia>(response, json);
@@ -130,7 +130,7 @@ namespace InstaSharper.API.Processors
                 };
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.IsSuccessStatusCode)
                 {
                     var mediaResponse = JsonConvert.DeserializeObject<InstaStoryMediaResponse>(json);
@@ -155,7 +155,7 @@ namespace InstaSharper.API.Processors
                 var userFeedUri = UriCreator.GetUserReelFeedUri(userId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaReelFeed>(response, json);
                 var feedResponse = JsonConvert.DeserializeObject<InstaReelFeedResponse>(json);

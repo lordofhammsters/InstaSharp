@@ -42,7 +42,7 @@ namespace InstaSharper.API.Processors
                 var collectionUri = UriCreator.GetMediaIdFromUrlUri(uri);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<string>(response, json);
@@ -74,7 +74,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<bool>(response, json);
@@ -105,7 +105,7 @@ namespace InstaSharper.API.Processors
 
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                     return Result.Success(true);
                 var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
@@ -138,7 +138,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = requestContent;
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 var videoResponse = JsonConvert.DeserializeObject<VideoUploadJobResponse>(json);
                 if (videoResponse == null)
@@ -171,7 +171,7 @@ namespace InstaSharper.API.Processors
                 request.Headers.Add("Session-ID", uploadId);
                 request.Headers.Add("job", first.Job);
                 response = await _httpRequestProcessor.SendAsync(request);
-                json = await response.Content.ReadAsStringAsync();
+                json = await response.Content.ReadAsStringUnZipAsync();
 
                 await UploadVideoThumbnailAsync(imageThumbnail, uploadId);
 
@@ -207,7 +207,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = requestContent;
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 var imgResp = JsonConvert.DeserializeObject<ImageThumbnailResponse>(json);
                 if (imgResp.Status.ToLower() == "ok")
                     return Result.Success(true);
@@ -266,7 +266,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 request.Headers.Host = "i.instagram.com";
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (!response.IsSuccessStatusCode)
                     return Result.UnExpectedResponse<InstaMedia>(response, json);
 
@@ -302,7 +302,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 request.Headers.Host = "i.instagram.com";
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 var jObject = JsonConvert.DeserializeObject<ImageThumbnailResponse>(json);
 
                 if (jObject.Status.ToLower() == "ok")
@@ -344,7 +344,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = requestContent;
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.IsSuccessStatusCode)
                     return await ConfigurePhotoAsync(image, uploadId, caption);
                 return Result.UnExpectedResponse<InstaMedia>(response, json);
@@ -386,7 +386,7 @@ namespace InstaSharper.API.Processors
                     var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                     request.Content = requestContent;
                     var response = await _httpRequestProcessor.SendAsync(request);
-                    var json = await response.Content.ReadAsStringAsync();
+                    var json = await response.Content.ReadAsStringUnZipAsync();
                     if (response.IsSuccessStatusCode)
                         uploadIds[index++] = uploadId;
                     else
@@ -447,7 +447,7 @@ namespace InstaSharper.API.Processors
                 };
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (!response.IsSuccessStatusCode)
                     return Result.UnExpectedResponse<InstaMedia>(response, json);
                 var mediaResponse =
@@ -497,7 +497,7 @@ namespace InstaSharper.API.Processors
                 };
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (!response.IsSuccessStatusCode)
                     return Result.UnExpectedResponse<InstaMedia>(response, json);
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
@@ -519,7 +519,7 @@ namespace InstaSharper.API.Processors
                 var likersUri = UriCreator.GetMediaLikersUri(mediaId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, likersUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaLikersList>(response, json);
                 var mediaLikersResponse = JsonConvert.DeserializeObject<InstaMediaLikersResponse>(json);
@@ -570,7 +570,7 @@ namespace InstaSharper.API.Processors
                 var mediaUri = UriCreator.GetMediaUri(mediaId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, mediaUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaMedia>(response, json);
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
@@ -600,7 +600,7 @@ namespace InstaSharper.API.Processors
                 var collectionUri = UriCreator.GetShareLinkFromMediaId(mediaId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<Uri>(response, json);
@@ -627,7 +627,7 @@ namespace InstaSharper.API.Processors
             var request =
                 HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
             var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringUnZipAsync();
             return response.StatusCode == HttpStatusCode.OK
                 ? Result.Success(true)
                 : Result.UnExpectedResponse<bool>(response, json);

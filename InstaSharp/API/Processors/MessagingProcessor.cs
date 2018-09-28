@@ -40,7 +40,7 @@ namespace InstaSharper.API.Processors
                 var directInboxUri = UriCreator.GetDirectInboxUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaDirectInboxContainer>(response, json);
                 var inboxResponse = JsonConvert.DeserializeObject<InstaDirectInboxContainerResponse>(json);
@@ -61,7 +61,7 @@ namespace InstaSharper.API.Processors
                 var directInboxUri = UriCreator.GetDirectInboxThreadUri(threadId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaDirectInboxThread>(response, json);
                 var threadResponse = JsonConvert.DeserializeObject<InstaDirectInboxThreadResponse>(json,
@@ -94,7 +94,7 @@ namespace InstaSharper.API.Processors
 
                 request.Content = new FormUrlEncodedContent(fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
                 var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
@@ -117,7 +117,7 @@ namespace InstaSharper.API.Processors
                 var userUri = UriCreator.GetRecentRecipientsUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaRecipients>(response, json);
@@ -139,7 +139,7 @@ namespace InstaSharper.API.Processors
                 var userUri = UriCreator.GetRankedRecipientsUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaRecipients>(response, json);
                 var responseRecipients = JsonConvert.DeserializeObject<InstaRankedRecipientsResponse>(json);

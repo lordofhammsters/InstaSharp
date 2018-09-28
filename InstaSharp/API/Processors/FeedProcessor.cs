@@ -41,7 +41,7 @@ namespace InstaSharper.API.Processors
                 var userFeedUri = UriCreator.GetTagFeedUri(tag, paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaTagFeed>(response, json);
                 var feedResponse = JsonConvert.DeserializeObject<InstaTagFeedResponse>(json,
@@ -80,7 +80,7 @@ namespace InstaSharper.API.Processors
                 var userFeedUri = UriCreator.GetUserFeedUri(paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaFeed>(response, json);
 
@@ -246,7 +246,7 @@ namespace InstaSharper.API.Processors
                 var exploreUri = UriCreator.GetExploreUri(paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaExploreFeed>(response, json);
                 var feedResponse = JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json,
@@ -300,7 +300,7 @@ namespace InstaSharper.API.Processors
             var instaUri = UriCreator.GetUserLikeFeedUri(paginationParameters.NextId);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringUnZipAsync();
             if (response.StatusCode != HttpStatusCode.OK)
                 return Result.UnExpectedResponse<InstaMediaList>(response, json);
             var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
@@ -331,7 +331,7 @@ namespace InstaSharper.API.Processors
             var uri = UriCreator.GetFollowingRecentActivityUri(maxId);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringUnZipAsync();
             if (response.StatusCode != HttpStatusCode.OK)
                 return Result.UnExpectedResponse<InstaRecentActivityResponse>(response, json);
             var followingActivity = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json,
@@ -345,7 +345,7 @@ namespace InstaSharper.API.Processors
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request, HttpCompletionOption.ResponseContentRead);
             var activityFeed = new InstaActivityFeed();
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringUnZipAsync();
             if (response.StatusCode != HttpStatusCode.OK)
                 return Result.UnExpectedResponse<InstaActivityFeed>(response, json);
             var feedPage = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json,

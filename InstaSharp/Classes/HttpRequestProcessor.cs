@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.Classes.Android.DeviceInfo;
+using InstaSharper.Helpers;
 using InstaSharper.Logger;
 
 namespace InstaSharper.Classes
@@ -80,7 +81,7 @@ namespace InstaSharper.Classes
                 await Task.Delay(_delay.Value);
             var response = await Client.SendAsync(requestMessage, completionOption);
             LogHttpResponse(response);
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringUnZipAsync();
         }
 
         public async Task<string> GeJsonAsync(Uri requestUri)
@@ -90,7 +91,7 @@ namespace InstaSharper.Classes
                 await Task.Delay(_delay.Value);
             var response = await Client.GetAsync(requestUri);
             LogHttpResponse(response);
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringUnZipAsync();
         }
 
         private void LogHttpRequest(HttpRequestMessage request)

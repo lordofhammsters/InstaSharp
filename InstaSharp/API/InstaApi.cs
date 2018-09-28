@@ -863,7 +863,7 @@ namespace InstaSharper.API
                 var instaUri = UriCreator.GetCreateAccountUri();
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsStringUnZipAsync();
 
                 return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
             }
@@ -948,6 +948,8 @@ namespace InstaSharper.API
 
                         }
 
+                        IsUserAuthenticated = true;
+
                         return Result.Success(InstaLoginResult.Success);
                     }
                 }
@@ -1024,7 +1026,7 @@ namespace InstaSharper.API
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
                     //Then check it
@@ -1348,7 +1350,7 @@ namespace InstaSharper.API
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -1408,7 +1410,7 @@ namespace InstaSharper.API
                 var instaUri = UriCreator.GetLogoutUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
                 var logoutInfo = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
                 if (logoutInfo.Status == "ok")

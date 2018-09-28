@@ -59,7 +59,7 @@ namespace InstaSharper.API.Processors
 
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, newuri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaLocationShortList>(response, json);
                 var locations = JsonConvert.DeserializeObject<InstaLocationSearchResponse>(json);
@@ -81,7 +81,7 @@ namespace InstaSharper.API.Processors
                 var uri = _getFeedUriCreator.GetUri(locationId, paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaLocationFeed>(response, json);
 

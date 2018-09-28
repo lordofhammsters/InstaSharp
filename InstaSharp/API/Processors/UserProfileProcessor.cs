@@ -52,7 +52,7 @@ namespace InstaSharper.API.Processors
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
 
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaUserShort>(response, json);
                 var userInfoUpdated =
@@ -90,7 +90,7 @@ namespace InstaSharper.API.Processors
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var userInfoUpdated =
@@ -131,7 +131,7 @@ namespace InstaSharper.API.Processors
 
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                     return Result.Success(true);
                 var error = JsonConvert.DeserializeObject<BadStatusErrorsResponse>(json);

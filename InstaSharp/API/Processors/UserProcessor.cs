@@ -41,7 +41,7 @@ namespace InstaSharper.API.Processors
                 var instaUri = UriCreator.GetUserMediaListUri(userId, paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaMediaList>(response, json);
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
@@ -85,7 +85,7 @@ namespace InstaSharper.API.Processors
                 request.Properties.Add(
                     new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaUser>(response, json);
                 var userInfo = JsonConvert.DeserializeObject<InstaSearchUserResponse>(json);
@@ -143,7 +143,7 @@ namespace InstaSharper.API.Processors
             {
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaUserInfo>(response, json);
                 var userInfo = JsonConvert.DeserializeObject<InstaUserInfoContainerResponse>(json);
@@ -171,7 +171,7 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaCurrentUser>(response, json);
                 var user = JsonConvert.DeserializeObject<InstaCurrentUserResponse>(json,
@@ -290,7 +290,7 @@ namespace InstaSharper.API.Processors
                 var uri = UriCreator.GetUserTagsUri(userId, _user.RankToken, paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaMediaList) null);
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
                     new InstaMediaListDataConverter());
@@ -348,7 +348,7 @@ namespace InstaSharper.API.Processors
                 var userUri = UriCreator.GetUserFriendshipUri(userId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
                 var friendshipStatusResponse = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json);
@@ -377,7 +377,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK || string.IsNullOrEmpty(json))
                     return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
                 var friendshipStatus = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json,
@@ -407,7 +407,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK || string.IsNullOrEmpty(json))
                     return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
                 var friendshipStatus = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json,
@@ -426,7 +426,7 @@ namespace InstaSharper.API.Processors
         {
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringUnZipAsync();
             if (response.StatusCode != HttpStatusCode.OK)
                 return Result.UnExpectedResponse<InstaUserListShortResponse>(response, json);
             var instaUserListResponse = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);

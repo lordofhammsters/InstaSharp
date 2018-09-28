@@ -11,10 +11,10 @@ namespace InstaSharper.Helpers
     {
         public static async Task<string> ReadAsStringUtf8Async(this HttpContent content)
         {
-            return await content.ReadAsStringAsync(Encoding.UTF8);
+            return await content.ReadAsStringUnZipAsync(Encoding.UTF8);
         }
 
-        public static async Task<string> ReadAsStringAsync(this HttpContent content, Encoding encoding)
+        public static async Task<string> ReadAsStringUnZipAsync(this HttpContent content, Encoding encoding)
         {
             using (var reader = new StreamReader((await content.ReadAsStreamAsync()), encoding))
             {
@@ -44,7 +44,7 @@ namespace InstaSharper.Helpers
                 var a = ex.Message;
             }
 
-            return await content.ReadAsStringAsync();
+            return await content.ReadAsStringUnZipAsync();
         }
     }
 }

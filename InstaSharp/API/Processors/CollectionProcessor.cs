@@ -38,7 +38,7 @@ namespace InstaSharper.API.Processors
                 var collectionUri = UriCreator.GetCollectionUri(collectionId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
 
@@ -62,7 +62,7 @@ namespace InstaSharper.API.Processors
                 var collectionUri = UriCreator.GetCollectionsUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaCollections>(response, json);
@@ -97,7 +97,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
 
                 var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
                 var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
@@ -130,7 +130,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                     return Result.Success(true);
 
@@ -166,7 +166,7 @@ namespace InstaSharper.API.Processors
                 var request =
                     HttpHelper.GetSignedRequest(HttpMethod.Get, editCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
                 var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
