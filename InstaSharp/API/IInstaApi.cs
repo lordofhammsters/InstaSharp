@@ -107,6 +107,8 @@ namespace InstaSharper.API
         /// </returns>
         Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, PaginationParameters paginationParameters);
 
+        Task<IResult<InstaMediaList>> GetUserMediaAsync(long userId, PaginationParameters paginationParameters);
+
         /// <summary>
         ///     Get media by its id asynchronously
         /// </summary>

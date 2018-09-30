@@ -107,6 +107,11 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserMediaAsync(user.Value.Pk, paginationParameters);
         }
 
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(long userId, PaginationParameters paginationParameters)
+        {
+            return await _userProcessor.GetUserMediaAsync(userId, paginationParameters);
+        }
+
         /// <summary>
         ///     Get media by its id asynchronously
         /// </summary>
@@ -133,7 +138,6 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _userProcessor.GetUserAsync(username);
         }
-
 
         /// <summary>
         ///     Get currently logged in user info asynchronously

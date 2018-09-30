@@ -79,15 +79,15 @@ namespace InstaSharper.API.Processors
             {
                 var userUri = UriCreator.GetUserUri(username);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
-                request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
-                    InstaApiConstants.TIMEZONE_OFFSET.ToString()));
+                request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString()));
                 request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
-                request.Properties.Add(
-                    new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
+                request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
+
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaUser>(response, json);
+
                 var userInfo = JsonConvert.DeserializeObject<InstaSearchUserResponse>(json);
                 var user = userInfo.Users?.FirstOrDefault(u => u.UserName == username);
                 if (user == null)
@@ -99,6 +99,7 @@ namespace InstaSharper.API.Processors
 
                 if (user.Pk < 1)
                     Result.Fail<InstaUser>("Pk is incorrect");
+
                 var converter = ConvertersFabric.Instance.GetUserConverter(user);
                 return Result.Success(converter.Convert());
             }
@@ -108,7 +109,7 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<InstaUser>(exception.Message);
             }
         }
-
+        
         public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
         {
             try
