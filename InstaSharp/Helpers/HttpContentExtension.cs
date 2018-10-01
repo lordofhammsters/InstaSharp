@@ -44,7 +44,7 @@ namespace InstaSharper.Helpers
                 var a = ex.Message;
             }
 
-            return await content.ReadAsStringUnZipAsync();
+            return await content.ReadAsStringAsync();
         }
     }
 }
