@@ -1,6 +1,7 @@
 ﻿using System;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using InstaSharperDirect.Converters;
 
 namespace InstaSharper.Converters
 {

@@ -1,8 +1,9 @@
 ﻿using System;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using InstaSharper.Converters;
 
-namespace InstaSharper.Converters
+namespace InstaSharperDirect.Converters
 {
     internal class InstaUserConverter : IObjectConverter<InstaUser, InstaUserResponse>
     {
@@ -21,7 +22,8 @@ namespace InstaSharper.Converters
                 SocialContext = SourceObject.SocialContext
             };
 
-            if (double.TryParse(SourceObject.MulualFollowersCount, out var mutualFollowers))
+            double mutualFollowers;
+            if (double.TryParse(SourceObject.MulualFollowersCount, out mutualFollowers))
                 user.MutualFollowers = System.Convert.ToInt16(mutualFollowers);
 
             if (SourceObject.FriendshipStatus != null)

@@ -45,11 +45,6 @@ namespace InstaSharper.API.Processors
                 var commentListResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
                 var pagesLoaded = 1;
 
-                InstaCommentList Convert(InstaCommentListResponse commentsResponse)
-                {
-                    return ConvertersFabric.Instance.GetCommentListConverter(commentsResponse).Convert();
-                }
-
                 while (commentListResponse.MoreComentsAvailable
                        && !string.IsNullOrEmpty(commentListResponse.NextMaxId)
                        && pagesLoaded < paginationParameters.MaximumPagesToLoad)
@@ -71,6 +66,11 @@ namespace InstaSharper.API.Processors
                 _logger?.LogException(exception);
                 return Result.Fail<InstaCommentList>(exception);
             }
+        }
+
+        InstaCommentList Convert(InstaCommentListResponse commentsResponse)
+        {
+            return ConvertersFabric.Instance.GetCommentListConverter(commentsResponse).Convert();
         }
 
         public async Task<IResult<InstaComment>> CommentMediaAsync(string mediaId, string text)

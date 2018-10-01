@@ -54,7 +54,9 @@ namespace InstaSharper.API.Processors
                     fields.Add("search_query", query);
                 else
                     fields.Add("timestamp", DateTimeHelper.GetUnixTimestampSeconds().ToString());
-                if (!Uri.TryCreate(uri, fields.AsQueryString(), out var newuri))
+
+                Uri newuri;
+                if (!Uri.TryCreate(uri, fields.AsQueryString(), out newuri))
                     return Result.Fail<InstaLocationShortList>("Unable to create uri for location search");
 
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, newuri, _deviceInfo);

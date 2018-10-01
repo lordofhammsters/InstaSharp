@@ -7,8 +7,8 @@
     <ProjectGuid>{150E3796-5EDB-4F26-B929-9FC449663ABE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>InstaSharper</RootNamespace>
-    <AssemblyName>InstaSharper</AssemblyName>
+    <RootNamespace>InstaSharperDirect</RootNamespace>
+    <AssemblyName>InstaSharperDirect</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

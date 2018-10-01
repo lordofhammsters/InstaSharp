@@ -8,7 +8,8 @@ namespace InstaSharper.API.UriCreators
 
         public Uri GetUri(long id, string nextId)
         {
-            if (!Uri.TryCreate(InstaApiConstants.BaseInstagramUri, string.Format(LocationFeed, id), out var instaUri))
+            Uri instaUri;
+            if (!Uri.TryCreate(InstaApiConstants.BaseInstagramUri, string.Format(LocationFeed, id), out instaUri))
                 throw new Exception("Can't create URI for getting location feed");
             var query = string.Empty;
             if (!string.IsNullOrEmpty(nextId)) query += $"max_id={nextId}";

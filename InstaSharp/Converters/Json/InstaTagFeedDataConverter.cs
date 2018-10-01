@@ -28,13 +28,7 @@ namespace InstaSharper.Converters.Json
             var rankedItems = root.SelectToken("ranked_items");
             var items = root.SelectToken("items");
             var storiesTray = root.SelectToken("items[0].stories.tray");
-
-            List<InstaMediaItemResponse> GetMedias(JToken token)
-            {
-                return token.Select(item => item?.ToObject<InstaMediaItemResponse>())
-                    .Where(media => !string.IsNullOrEmpty(media?.Pk)).ToList();
-            }
-
+            
             if (items != null)
                 feed.Medias.AddRange(GetMedias(items));
             if (rankedItems != null)
@@ -48,6 +42,12 @@ namespace InstaSharper.Converters.Json
             }
 
             return feed;
+        }
+
+        List<InstaMediaItemResponse> GetMedias(JToken token)
+        {
+            return token.Select(item => item?.ToObject<InstaMediaItemResponse>())
+                .Where(media => !string.IsNullOrEmpty(media?.Pk)).ToList();
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

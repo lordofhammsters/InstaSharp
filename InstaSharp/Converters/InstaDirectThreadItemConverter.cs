@@ -21,7 +21,8 @@ namespace InstaSharper.Converters
             threadItem.UserId = SourceObject.UserId;
 
             var truncatedItemType = SourceObject.ItemType.Trim().Replace("_", "");
-            if (Enum.TryParse(truncatedItemType, true, out InstaDirectThreadItemType type))
+            InstaDirectThreadItemType type;
+            if (Enum.TryParse(truncatedItemType, true, out type))
                 threadItem.ItemType = type;
 
             if (threadItem.ItemType == InstaDirectThreadItemType.Link)

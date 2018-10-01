@@ -54,9 +54,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InstaSharp\InstaSharper.csproj">
+    <ProjectReference Include="..\InstaSharp\InstaSharperDirect.csproj">
       <Project>{150e3796-5edb-4f26-b929-9fc449663abe}</Project>
-      <Name>InstaSharper</Name>
+      <Name>InstaSharperDirect</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

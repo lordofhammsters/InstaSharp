@@ -8,9 +8,10 @@ namespace InstaSharper.API.UriCreators
 
         public Uri GetUri()
         {
-            if (!Uri.TryCreate(InstaApiConstants.BaseInstagramUri, SearchLocation, out var instaUri))
+            Uri uri;
+            if (!Uri.TryCreate(InstaApiConstants.BaseInstagramUri, SearchLocation, out uri))
                 throw new Exception("Can't create URI for searchiing location");
-            return instaUri;
+            return uri;
         }
     }
 }

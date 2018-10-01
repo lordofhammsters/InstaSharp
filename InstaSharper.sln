@@ -1,10 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaSharper.Tests", "InstaSharper.Tests\InstaSharper.Tests.csproj", "{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper", "InstaSharp\InstaSharper.csproj", "{150E3796-5EDB-4F26-B929-9FC449663ABE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharperDirect", "InstaSharp\InstaSharperDirect.csproj", "{150E3796-5EDB-4F26-B929-9FC449663ABE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{CA6D0C5F-D4AD-418A-8B56-F912D2A85A4A}"
 EndProject

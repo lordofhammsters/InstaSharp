@@ -14,21 +14,7 @@ namespace InstaSharper.Converters
             if (SourceObject?.Medias == null)
                 throw new ArgumentNullException("InstaFeedResponse or its media list");
             var feed = new InstaTagFeed();
-
-            List<InstaMedia> ConvertMedia(List<InstaMediaItemResponse> mediasResponse)
-            {
-                var medias = new List<InstaMedia>();
-                foreach (var instaUserFeedItemResponse in mediasResponse)
-                {
-                    if (instaUserFeedItemResponse?.Type != 0) continue;
-                    var feedItem = ConvertersFabric.Instance.GetSingleMediaConverter(instaUserFeedItemResponse)
-                        .Convert();
-                    medias.Add(feedItem);
-                }
-
-                return medias;
-            }
-
+            
             feed.RankedMedias.AddRange(ConvertMedia(SourceObject.RankedItems));
             feed.Medias.AddRange(ConvertMedia(SourceObject.Medias));
             feed.NextId = SourceObject.NextMaxId;
@@ -39,6 +25,20 @@ namespace InstaSharper.Converters
             }
 
             return feed;
+        }
+
+        List<InstaMedia> ConvertMedia(List<InstaMediaItemResponse> mediasResponse)
+        {
+            var medias = new List<InstaMedia>();
+            foreach (var instaUserFeedItemResponse in mediasResponse)
+            {
+                if (instaUserFeedItemResponse?.Type != 0) continue;
+                var feedItem = ConvertersFabric.Instance.GetSingleMediaConverter(instaUserFeedItemResponse)
+                    .Convert();
+                medias.Add(feedItem);
+            }
+
+            return medias;
         }
     }
 }
