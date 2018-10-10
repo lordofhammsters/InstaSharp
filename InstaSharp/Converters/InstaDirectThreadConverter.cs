@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
@@ -38,8 +39,14 @@ namespace InstaSharper.Converters
                 thread.Items = new List<InstaDirectInboxItem>();
                 foreach (var item in SourceObject.Items)
                 {
-                    var converter = ConvertersFabric.Instance.GetDirectThreadItemConverter(item);
-                    thread.Items.Add(converter.Convert());
+                    try
+                    {
+                        var converter = ConvertersFabric.Instance.GetDirectThreadItemConverter(item);
+                        thread.Items.Add(converter.Convert());
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
