@@ -24,6 +24,9 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("link")] public InstaWebLinkResponse Link { get; set; }
 
-        [JsonProperty("client_context")] public Guid ClientContext { get; set; }
+        /// <summary>
+        /// Иногда приходит строка вместо гуида
+        /// </summary>
+        [JsonProperty("client_context")] public string ClientContext { get; set; }
     }
 }

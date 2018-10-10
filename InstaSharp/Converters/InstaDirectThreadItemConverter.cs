@@ -11,9 +11,14 @@ namespace InstaSharper.Converters
 
         public InstaDirectInboxItem Convert()
         {
+            Guid clientContext;
+
+            if (!Guid.TryParse(SourceObject.ClientContext, out clientContext))
+                clientContext = Guid.Empty;
+
             var threadItem = new InstaDirectInboxItem
             {
-                ClientContext = SourceObject.ClientContext,
+                ClientContext = clientContext,
                 ItemId = SourceObject.ItemId
             };
 
