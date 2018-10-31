@@ -41,7 +41,7 @@ namespace InstaSharper.API.Processors
                 var directInboxUri = UriCreator.GetDirectInboxUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
 
-                var response = await _httpRequestProcessor.SendAsync(request);
+                var response = await _httpRequestProcessor.SendAsyncWithoutDelay(request);
 
                 var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
@@ -66,7 +66,7 @@ namespace InstaSharper.API.Processors
                 var directInboxUri = UriCreator.GetPendingDirectInboxUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
 
-                var response = await _httpRequestProcessor.SendAsync(request);
+                var response = await _httpRequestProcessor.SendAsyncWithoutDelay(request);
 
                 var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
@@ -123,7 +123,7 @@ namespace InstaSharper.API.Processors
                     fields.Add("thread_ids", "[" + threadIds + "]");
 
                 request.Content = new FormUrlEncodedContent(fields);
-                var response = await _httpRequestProcessor.SendAsync(request);
+                var response = await _httpRequestProcessor.SendAsyncWithoutDelay(request);
                 var json = await response.Content.ReadAsStringUnZipAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
