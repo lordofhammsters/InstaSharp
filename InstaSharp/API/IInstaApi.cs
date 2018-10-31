@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API
 {
@@ -196,6 +197,14 @@ namespace InstaSharper.API
         ///     <see cref="InstaDirectInboxContainer" />
         /// </returns>
         Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync();
+
+        Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
+
+        Task<IResult<InstaDirectInboxContainer>> GetPendingDirectInboxAsync();
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThreads(List<string> threadIds);
+
+
 
         /// <summary>
         ///     Get direct inbox thread by its id asynchronously

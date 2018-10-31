@@ -195,8 +195,20 @@ namespace InstaSharper.Helpers
         public static Uri GetDirectInboxUri()
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_INBOX, out instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri,
+                InstaApiConstants.GET_DIRECT_INBOX + "?persistentBadging=true&use_unified_inbox=true", out instaUri))
                 throw new Exception("Cant create URI for get inbox");
+
+            return instaUri;
+        }
+
+        public static Uri GetPendingDirectInboxUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri,
+                InstaApiConstants.GET_PENDING_DIRECT_INBOX + "?persistentBadging=true&use_unified_inbox=true", out instaUri))
+                throw new Exception("Cant create URI for get inbox");
+
             return instaUri;
         }
 
@@ -547,6 +559,31 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_SHARE_LINK, mediaId),
                 out instaUri))
                 throw new Exception("Can't create URI for getting share link");
+            return instaUri;
+        }
+
+        public static Uri GetApproveThreadUri(string threadId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_DIRECT_APPROVE_THREAD, threadId),
+                out instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri;
+        }
+
+        public static Uri GetApproveThreadsUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_APPROVE_THREADS, out instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri;
+        }
+
+        public static Uri GetDeclineAllPendingThreadsUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_DECLINE_ALL, out instaUri))
+                throw new Exception("Cant create URI for get inbox");
             return instaUri;
         }
     }

@@ -168,6 +168,30 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            return await _messagingProcessor.DeclineAllPendingDirectThreads();
+        }
+
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            return await _messagingProcessor.ApprovePendingDirectThread(threadId);
+        }
+
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThreads(List<string> threadIds)
+        {
+            return await _messagingProcessor.ApprovePendingDirectThreads(threadIds);
+        }
+
+        /// <summary>
         ///     Get followers list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
@@ -269,9 +293,12 @@ namespace InstaSharper.API
         /// </returns>
         public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
         {
-            ValidateUser();
-            ValidateLoggedIn();
             return await _messagingProcessor.GetDirectInboxAsync();
+        }
+
+        public async Task<IResult<InstaDirectInboxContainer>> GetPendingDirectInboxAsync()
+        {
+            return await _messagingProcessor.GetPendingDirectInboxAsync();
         }
 
         /// <summary>
@@ -283,8 +310,6 @@ namespace InstaSharper.API
         /// </returns>
         public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
         {
-            ValidateUser();
-            ValidateLoggedIn();
             return await _messagingProcessor.GetDirectInboxThreadAsync(threadId);
         }
 
@@ -980,6 +1005,8 @@ namespace InstaSharper.API
 
                 if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
+                    throw new Exception(json);
+
                     //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
 
