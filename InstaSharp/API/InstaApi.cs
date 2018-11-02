@@ -1494,16 +1494,26 @@ namespace InstaSharper.API
 
         private void InvalidateProcessors()
         {
-            _hashtagProcessor = new HashtagProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _userProcessor = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _storyProcessor = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _commentProcessor = new CommentProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _profileProcessor = new UserProfileProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _messagingProcessor = new MessagingProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _feedProcessor = new FeedProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_hashtagProcessor == null)
+                _hashtagProcessor = new HashtagProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_locationProcessor == null)
+                _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_collectionProcessor == null)
+                _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_mediaProcessor == null)
+                _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_userProcessor == null)
+                _userProcessor = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_storyProcessor == null)
+                _storyProcessor = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_commentProcessor == null)
+                _commentProcessor = new CommentProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_profileProcessor == null)
+                _profileProcessor = new UserProfileProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_messagingProcessor == null)
+                _messagingProcessor = new MessagingProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            if (_feedProcessor == null)
+                _feedProcessor = new FeedProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
         }
 
         private void ValidateUser()
@@ -1534,6 +1544,8 @@ namespace InstaSharper.API
 
         public InstaApiData GetData()
         {
+            InvalidateProcessors();
+
             var list = new List<KeyValuePair<string, string>>();
             var cookies = _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(new Uri("https://i.instagram.com"));
             
