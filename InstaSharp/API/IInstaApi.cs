@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using InstaSharperDirect.Classes.ResponseWrappers;
 
 namespace InstaSharper.API
 {
@@ -52,6 +53,22 @@ namespace InstaSharper.API
         ///     Exception --> Something wrong happened
         /// </returns>
         Task<IResult<InstaLoginResult>> LoginAsync();
+
+        /// <summary>
+        /// Require challenge code by sms or email
+        /// </summary>
+        /// <param name="challengeApiPath">challenge api path</param>
+        /// <param name="choiceMethod">0 = SMS, 1 = Email</param>
+        /// <returns></returns>
+        Task<bool> RequireChallengeCode(string challengeApiPath, int choiceMethod = 1);
+
+        /// <summary>
+        /// Send challenge code
+        /// </summary>
+        /// <param name="challengeApiPath">challenge api path</param>
+        /// <param name="code">code from sms or email</param>
+        /// <returns></returns>
+        Task<IResult<SendChallengeCodeResponse>> SendChallengeCode(string challengeApiPath, string code);
 
         /// <summary>
         ///     2-Factor Authentication Login using a verification code

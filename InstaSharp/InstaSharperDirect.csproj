@@ -239,6 +239,8 @@
     <Compile Include="Classes\ResponseWrappers\MessageErrorsResponse.cs" />
     <Compile Include="Classes\ResponseWrappers\RankedRecipientResponse.cs" />
     <Compile Include="Classes\ResponseWrappers\RankedRecipientThreadResponse.cs" />
+    <Compile Include="Classes\ResponseWrappers\RequireChallengeCodeResponse.cs" />
+    <Compile Include="Classes\ResponseWrappers\SendChallengeCodeResponse.cs" />
     <Compile Include="Classes\Result.cs" />
     <Compile Include="Classes\ResultInfo.cs" />
     <Compile Include="Classes\StateData.cs" />

@@ -14,6 +14,7 @@ using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Converters;
 using InstaSharper.Helpers;
 using InstaSharper.Logger;
+using InstaSharperDirect.Classes.ResponseWrappers;
 using Newtonsoft.Json;
 
 namespace InstaSharper.API
@@ -979,7 +980,7 @@ namespace InstaSharper.API
 
                         IsUserAuthenticated = true;
 
-                        return Result.Success(InstaLoginResult.Success);
+                        return Result.Success(new InstaLoginResult(InstaLoginStatus.Success));
                     }
                 }
 
@@ -1005,86 +1006,37 @@ namespace InstaSharper.API
 
                 if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
-                    throw new Exception(json);
-
-                    //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
 
                     if (loginFailReason.InvalidCredentials)
-                        return Result.Fail("Invalid Credentials", loginFailReason.ErrorType == "bad_password" ? InstaLoginResult.BadPassword : InstaLoginResult.InvalidUser);
+                        return Result.Fail("Invalid Credentials", new InstaLoginResult(loginFailReason.ErrorType == "bad_password" ? InstaLoginStatus.BadPassword : InstaLoginStatus.InvalidUser));
 
                     if (loginFailReason.TwoFactorRequired)
                     {
                         _twoFactorInfo = loginFailReason.TwoFactorLoginInfo;
+                        return Result.Fail("Two Factor Authentication is required", new InstaLoginResult(InstaLoginStatus.TwoFactorRequired));
+                    }
 
-                        //2FA is required!
-                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
+                    var challengeRequiredReason = JsonConvert.DeserializeObject<ChallengeRequiredResponse>(json);
+
+                    if (challengeRequiredReason.ErrorType == "checkpoint_challenge_required")
+                    {
+                        challengeRequiredReason.Json = json;
+                        return Result.Fail("checkpoint_challenge_required", new InstaLoginResult(InstaLoginStatus.ChallengeRequired){ Error = challengeRequiredReason});
                     }
 
                     return Result.UnExpectedResponse<InstaLoginResult>(response, json);
                 }
 
                 var loginInfo = JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-
-                IsUserAuthenticated = loginInfo.User?.UserName.ToLower() == _user.UserName.ToLower();
-
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
 
-                _user.LoggedInUder = converter.Convert();
-                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-                _user.LastLoginTime = DateTime.Now;
-
-                _httpRequestProcessor.RequestMessage.account_id = _user.LoggedInUder.Pk.ToString();
+                SetAuthorizedUser(converter.Convert());
 
                 // Updates the internal state after a successful login.
-
                 InvalidateProcessors();
 
                 await SendLoginFlow(true);
-
-                /*
-                await GetCsrfToken();
-
-                var instaUri = UriCreator.GetLoginUri();
-                var signature = $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
-                var fields = new Dictionary<string, string>
-                {
-                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
-                };
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = new FormUrlEncodedContent(fields);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringUnZipAsync();
-                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
-                {
-                    //Then check it
-                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
-
-                    if (loginFailReason.InvalidCredentials)
-                        return Result.Fail("Invalid Credentials",
-                            loginFailReason.ErrorType == "bad_password"
-                                ? InstaLoginResult.BadPassword
-                                : InstaLoginResult.InvalidUser);
-                    if (loginFailReason.TwoFactorRequired)
-                    {
-                        _twoFactorInfo = loginFailReason.TwoFactorLoginInfo;
-                        //2FA is required!
-                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
-                    }
-
-                    return Result.UnExpectedResponse<InstaLoginResult>(response, json);
-                }
-
-                var loginInfo = JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User?.UserName.ToLower() == _user.UserName.ToLower();
-                var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
-                _user.LoggedInUder = converter.Convert();
-                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-                return Result.Success(InstaLoginResult.Success);
-                */
             }
             catch (Exception exception)
             {
@@ -1092,11 +1044,113 @@ namespace InstaSharper.API
 
                 InvalidateProcessors();
 
-                return Result.Fail(exception, InstaLoginResult.Exception);
+                return Result.Fail(exception, new InstaLoginResult(InstaLoginStatus.Exception));
             }
 
-            return Result.Success(InstaLoginResult.Success);
+            return Result.Success(new InstaLoginResult(InstaLoginStatus.Success));
         }
+
+        private void SetAuthorizedUser(InstaUserShort user)
+        {
+            _user.LoggedInUder = user;
+            _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+            _user.LastLoginTime = DateTime.Now;
+
+            _httpRequestProcessor.RequestMessage.account_id = _user.LoggedInUder.Pk.ToString();
+
+            IsUserAuthenticated = true;
+        }
+
+
+        /// <summary>
+        /// Require challenge code by sms or email
+        /// </summary>
+        /// <param name="challengeApiPath">challenge api path</param>
+        /// <param name="choiceMethod">0 = SMS, 1 = Email</param>
+        /// <returns></returns>
+        public async Task<bool> RequireChallengeCode(string challengeApiPath, int choiceMethod = 1)
+        {
+            try
+            {
+                var uri = new Uri("https://i.instagram.com/api/v1" + challengeApiPath);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, uri, _deviceInfo);
+
+                var fields = new Dictionary<string, string>
+                {
+                    {"choice", choiceMethod.ToString()},
+                    {"_uuid", _httpRequestProcessor.RequestMessage.uuid},
+                    {"guid", _httpRequestProcessor.RequestMessage.uuid},
+                    {"device_id", _httpRequestProcessor.RequestMessage.device_id},
+                    {"_uid", challengeApiPath.Split(new [] {'/'}, StringSplitOptions.RemoveEmptyEntries)[1]},
+                    {"_csrftoken", _user.CsrfToken}
+                };
+                request.Content = new FormUrlEncodedContent(fields);
+
+                var response = await _httpRequestProcessor.SendAsyncWithoutDelay(request);
+                var json = await response.Content.ReadAsStringUnZipAsync();
+
+                var result = JsonConvert.DeserializeObject<RequireChallengeCodeResponse>(json);
+
+                return result != null && result.Status == "ok";
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Send challenge code
+        /// </summary>
+        /// <param name="challengeApiPath">challenge api path</param>
+        /// <param name="code">code from sms or email</param>
+        /// <returns></returns>
+        public async Task<IResult<SendChallengeCodeResponse>> SendChallengeCode(string challengeApiPath, string code)
+        {
+            try
+            {
+                var uri = new Uri("https://i.instagram.com/api/v1" + challengeApiPath);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post,  uri, _deviceInfo);
+
+                var fields = new Dictionary<string, string>
+                {
+                    {"security_code", code},
+                    {"_uuid", _httpRequestProcessor.RequestMessage.uuid},
+                    {"guid", _httpRequestProcessor.RequestMessage.uuid},
+                    {"device_id", _httpRequestProcessor.RequestMessage.device_id},
+                    {"_uid", challengeApiPath.Split(new [] {'/'}, StringSplitOptions.RemoveEmptyEntries)[1]},
+                    {"_csrftoken", _user.CsrfToken}
+                };
+                request.Content = new FormUrlEncodedContent(fields);
+
+                var response = await _httpRequestProcessor.SendAsyncWithoutDelay(request);
+                var json = await response.Content.ReadAsStringUnZipAsync();
+
+                var result = JsonConvert.DeserializeObject<SendChallengeCodeResponse>(json);
+
+                if (result.Status == "ok" && result.LoggedInUser != null)
+                {
+                    SetAuthorizedUser(new InstaUserShort()
+                    {
+                        UserName = result.LoggedInUser.Username,
+                        FullName = result.LoggedInUser.FullName,
+                        ProfilePicture = result.LoggedInUser.ProfilePicUrl,
+                        IsPrivate = result.LoggedInUser.IsPrivate,
+                        IsVerified = result.LoggedInUser.IsVerified,
+                        Pk = result.LoggedInUser.Pk
+                    });
+                }
+
+                return Result.Success(result);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail<SendChallengeCodeResponse>(exception);
+            }
+        }
+
 
         #region PreLogin Flow
 
